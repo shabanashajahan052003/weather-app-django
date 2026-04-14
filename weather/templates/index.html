@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weather App</title>
+
+<style>
+:root {
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --text: #333;
+    --primary: #007bff;
+}
+
+body.dark {
+    --bg: #121212;
+    --card: #1e1e2f;
+    --text: #ffffff;
+    --primary: #4facfe;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+}
+
+/* TOP */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+}
+
+.toggle {
+    cursor: pointer;
+    font-size: 22px;
+}
+
+/* MAIN */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    height: 49vh;
+}
+
+/* CARD */
+.card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 12px;
+    width: 320px;
+    min-height: 320px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+
+}
+
+img{
+    width: 80px;
+}
+
+/* INPUT */
+input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+}
+
+/* BUTTON */
+button {
+    padding: 10px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+}
+
+/* RESULT */
+.city {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.temp {
+    font-size: 36px;
+    color: var(--primary);
+}
+
+.extra p {
+    margin: 6px 0;
+}
+
+.error {
+    color: red;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        align-items: center;
+    }
+}
+</style>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    let icon = document.getElementById("icon");
+
+    if (document.body.classList.contains("dark")) {
+        icon.innerHTML = "☀️";
+    } else {
+        icon.innerHTML = "🌙";
+    }
+}
+
+/* SAVE CITY */
+function saveCity() {
+    let city = document.querySelector("input[name='city']").value;
+    localStorage.setItem("city", city);
+}
+
+/* LOAD CITY */
+window.onload = function() {
+    let savedCity = localStorage.getItem("city");
+
+    if (savedCity) {
+        document.querySelector("input[name='city']").value = savedCity;
+    }
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="topbar">
+    <h2>🌦️ Weather App</h2>
+    <div class="toggle" onclick="toggleTheme()" id="icon">🌙</div>
+</div>
+
+<div class="container">
+
+<!-- SEARCH -->
+<div class="card">
+    <form method="GET" onsubmit="saveCity()">
+        <input type="text" name="city" placeholder="Enter city">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</div>
+
+<!-- RESULT -->
+{% if data %}
+<div class="card">
+    <div class="city">📍 {{ data.city }}</div>
+
+    <img src="http://openweathermap.org/img/wn/{{ data.icon }}@2x.png">
+
+    <div class="temp">{{ data.temperature }}°C</div>
+
+    <p>{{ data.description }}</p>
+
+    <div class="extra">
+        <p>🌡️ Feels like: {{ data.feels }}°C</p>
+        <p>💧 Humidity: {{ data.humidity }}%</p>
+        <p>🌬️ Wind: {{ data.wind }} m/s</p>
+    </div>
+</div>
+{% endif %}
+
+</div>
+
+<!-- FORECAST -->
+{% if forecast %}
+<div style="margin-top: 30px; padding: 20px;">
+    <h3 style="text-align:center;">📅 Forecast</h3>
+
+    <div style="display:flex; gap:15px; justify-content:center; overflow-x:auto; margin-top:15px; padding-bottom:10px;">
+
+        {% for f in forecast %}
+        <div style="background: var(--card); padding:15px; border-radius:10px; min-width:150px; text-align:center; box-shadow:0 3px 10px rgba(0,0,0,0.1);">
+
+            <p style="font-size:12px;">{{ f.time|slice:"11:16" }}</p>
+
+            <img src="http://openweathermap.org/img/wn/{{ f.icon }}@2x.png">
+
+            <p><b>{{ f.temp }}°C</b></p>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endif %}
+
+</body>
+</html>

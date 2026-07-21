@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: weather-app
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn weather_project.wsgi:application"

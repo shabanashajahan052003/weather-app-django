@@ -1,11 +1,13 @@
+import os
 import requests
 from django.shortcuts import render
+
 
 def home(request):
     city = request.GET.get('city')
 
     if city:
-        api_key = "26f65745b9b4e4297fd332d667034e31"   # 👉 put your API key
+        api_key = os.getenv("WEATHER_API_KEY")  # 👉 put your API key
 
         # CURRENT WEATHER
         url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"

@@ -5,7 +5,8 @@ def home(request):
     city = request.GET.get('city')
 
     if city:
-        api_key = "YOUR_API_KEY"   
+        api_key = "26f65745b9b4e4297fd332d667034e31"   # 👉 put your API key
+
         # CURRENT WEATHER
         url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
         res = requests.get(url).json()
